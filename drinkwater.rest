@@ -1,0 +1,22 @@
+### Obtem dados do perfil
+GET http://localhost:8000/perfil
+### Salva dados do perfil
+POST http://localhost:8000/perfil
+Content-Type: application/json
+
+{
+    "email": "czcz.kt@gmail.com",
+    "passwd": "i31v2r"
+}
+### Obtem dados da notificacao
+GET http://localhost:8000/notification
+### Salva os dados da notificacao
+POST http://localhost:8000/notification
+Content-type: application/json
+
+ {
+    "start": "10:30",
+    "end": "22:00",
+    "interval": "01:00"
+}
+###
