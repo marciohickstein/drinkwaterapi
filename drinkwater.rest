@@ -14,9 +14,23 @@ GET http://localhost:8000/notification
 POST http://localhost:8000/notification
 Content-type: application/json
 
- {
+{
     "start": "10:30",
     "end": "22:00",
     "interval": "01:00"
 }
+### Obtem dados do consumo do dia
+GET http://localhost:8000/water-consumption
+### Salva dados do consumo do dia
+POST http://localhost:8000/water-consumption
+Content-Type: application/json
+
+{ 
+    "type": "glass", 
+    "quantity": 200, 
+    "time": "09:30:50" 
+}
+### Remove um dado de consumo do dia
+DELETE http://localhost:8000/water-consumption/1
 ###
+

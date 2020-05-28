@@ -4,13 +4,14 @@ const cors = require('cors');
 const app = express();
 const {routerPerfil} = require("./routes/perfil");
 const {routerNotification} = require('./routes/notification');
+const {routerWaterConsumption} = require('./routes/water-consumption')
 const {response} = require('./utils')
 
 app.use(express.json());
 app.options('/perfil', cors());
 app.use("/perfil", routerPerfil);
 app.use('/notification', routerNotification);
-
+app.use('/water-consumption', routerWaterConsumption)
 let port = 8000;
 
 app.listen(port, () => {
