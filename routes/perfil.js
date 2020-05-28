@@ -15,6 +15,7 @@ router.get("/", cors(), (req, res) => {
         console.log(`Send: ${JSON.stringify(perfil)}`);
         res.json(perfil);
     })
+
 })
 
 router.post("/", cors(), (req, res) => {
