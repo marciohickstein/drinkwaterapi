@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const {showRequest, response} = require('../utils')
-const cors = require('cors');
 const fs = require('fs');
 
 function parserData(data){
@@ -21,7 +20,7 @@ function getFileName(){
     return `water-consumption-${dateAndTime[0]}.json`;
 }
 
-router.get("/", cors(), (req, res) => {
+router.get("/", (req, res) => {
     showRequest(req);
 
     let filename = getFileName();

@@ -1,14 +1,11 @@
 const fs = require('fs');
 const express = require('express');
-const cors = require('cors');
 const router = express.Router();
 const {response} = require('../utils')
 const {showRequest} = require('../utils')
 
-router.options('/', cors());
-
 // Rotas para retornar e salvar os dados do perfil
-router.get("/", cors(), (req, res) => {
+router.get("/", (req, res) => {
     showRequest(req);
     fs.readFile("perfil.json", (err, data) => {
         let perfil = err ? {} : JSON.parse(data);
@@ -18,7 +15,7 @@ router.get("/", cors(), (req, res) => {
 
 })
 
-router.post("/", cors(), (req, res) => {
+router.post("/", (req, res) => {
     const data = JSON.stringify(req.body);
 
     showRequest(req, data);
