@@ -8,7 +8,7 @@ const {routerWaterConsumption} = require('./routes/water-consumption')
 const {response} = require('./utils')
 
 app.use(express.json());
-app.options('/perfil', cors());
+app.use(cors());
 app.use("/perfil", routerPerfil);
 app.use('/notification', routerNotification);
 app.use('/water-consumption', routerWaterConsumption)
