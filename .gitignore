@@ -1,3 +1,2 @@
 node_modules/
-perfil.json
-notification.json
+*.json
