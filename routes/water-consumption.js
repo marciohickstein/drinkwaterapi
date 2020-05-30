@@ -1,17 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const {showRequest, response} = require('../utils')
+const {showRequest, response, parserData} = require('../utils')
 const fs = require('fs');
-
-function parserData(data){
-    let dataParsed = null;
-    
-    try{
-        dataParsed = JSON.parse(data);
-    }catch(err){}
-
-    return dataParsed;
-}
 
 function getFileName(){
     let strDateAndTime = new Date().toISOString();
