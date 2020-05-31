@@ -1,3 +1,10 @@
+function getDate(){
+    const dateString = new Date().toLocaleString('en-us',
+    {
+        timeZone: 'America/Sao_Paulo'
+    });
+    return new Date(dateString);
+}
 function parserData(data){
     let dataParsed = null;
     
@@ -16,3 +23,4 @@ function showRequest(request, data){
 module.exports.response = response;
 module.exports.showRequest = showRequest;
 module.exports.parserData = parserData;
+module.exports.getDate = getDate;

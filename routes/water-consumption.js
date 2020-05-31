@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {showRequest, response, parserData} = require('../utils')
+const {showRequest, response, parserData, getDate} = require('../utils')
 const fs = require('fs');
 
 function getFileName(){
-    let strDateAndTime = new Date().toISOString();
+    let strDateAndTime = getDate().toISOString();
     let dateAndTime = strDateAndTime.split('T');
 
     return `water-consumption-${dateAndTime[0]}.json`;
