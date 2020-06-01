@@ -20,9 +20,9 @@ router.post("/", (req, res) => {
 
     showRequest(req, data);
 
-    const {email, passwd} = req.body;
+    const {email, passwd, weight} = req.body;
 
-    if (!email || !passwd)
+    if (!email || !passwd || !weight)
     {
         res.json(response(1, "Dados enviados no formato invalido"));
         return ;
