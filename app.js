@@ -16,6 +16,7 @@ const {reminderEventConnection} = require('./socket-reminder.js');
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use("/", express.static('client/'));
 app.use("/perfil", routerPerfil);
 app.use('/notification', routerNotification);
 app.use('/water-consumption', routerWaterConsumption);
