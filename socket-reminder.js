@@ -1,25 +1,40 @@
 const EVENT_REMINDER = 'reminder';
 
-var timerInterval;
+var timers = new Map();
 
-function reminderEventEmit(socket, timeInterval){
-    console.log(`Start reminder.`)
-    console.log(`Client will be reminded at ${timeInterval} ms...`)
-    timerInterval = setInterval(() => {
-        socket.emit(EVENT_REMINDER, 'Não esqueça de beber água!');
-    }, timeInterval);
+function showTimers(){
+    for (var [ key, value ] of timers){
+        console.log(`${key}=${value}`);
+    }
 }
 
-function reminderEventConnection(io, timeInterval){
+function reminderStartTimer(socket, timeInterval){
+    console.log(`Start timer reminder...`)
+    let timerInterval = setInterval(() => {
+        socket.emit(EVENT_REMINDER, 'Não esqueça de beber água!');
+        console.log("Send reminder to client: " + socket.id);
+    }, timeInterval);
+
+    timers.set(socket.id, timerInterval);
+    showTimers();
+}
+
+function reminderStopTimer(socket){
+    console.log(`Stop timer reminder...`)
+    let timerInterval = timers.get(socket.id);
+    showTimers();
+    clearInterval(timerInterval);
+}
+
+function reminderConnection(io, timeInterval){
     io.on('connection', (socket) => {
         console.log(`Client connected: ${socket.id}`);
-        reminderEventEmit(socket, timeInterval);
+        reminderStartTimer(socket, timeInterval);
         socket.on('disconnect', function () {
             console.log(`Client ${socket.id} disconnected.`)
-            console.log(`Stop reminder.`)
-            clearInterval(timerInterval);
+            reminderStopTimer(socket);
         });
     })
 }
 
-module.exports.reminderEventConnection = reminderEventConnection;
+module.exports.reminderConnection = reminderConnection;

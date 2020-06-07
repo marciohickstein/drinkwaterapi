@@ -1,15 +1,21 @@
 const fs = require('fs');
+const DEFAULT_INTERVAL = '00:15'; // Interval 15min
 
 // Read configurations
 function readConfigurationInterval(){
     // Get interval of the reminder
-    let data = fs.readFileSync('notification.json');
-    let object = parserData(data);
+    let data, object;
+    
+    try {
+        data = fs.readFileSync('notification.json');
+        object = parserData(data);
+    
+        timeToReminder = object ? object.interval : DEFAULT_INTERVAL;
+    } catch (error) {
+        timeToReminder = DEFAULT_INTERVAL;
+    }
 
-    timeToReminder = object ? object.interval : '00:15';
     timeToReminder = (parseInt(timeToReminder.split(':')[0] * 3600) + parseInt(timeToReminder.split(':')[1] * 60)) * 1000;
-
-    console.log(`${timeToReminder}`)
     return timeToReminder;
 }
 

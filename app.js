@@ -11,7 +11,7 @@ const {routerNotification} = require('./routes/notification');
 const {routerWaterConsumption} = require('./routes/water-consumption')
 const {routerReminder} = require('./routes/reminder')
 const {readConfigurationInterval} = require('./utils');
-const {reminderEventConnection} = require('./socket-reminder.js');
+const {reminderConnection} = require('./socket-reminder.js');
 
 // Middleware
 app.use(express.json());
@@ -30,7 +30,7 @@ let timeInterval = readConfigurationInterval();
 
 // Create socket to real time reminder
 const io = require('socket.io')(server);
-reminderEventConnection(io, timeInterval);
+reminderConnection(io, timeInterval);
 
 server.listen(port, () => {
     console.log(`Server Drink Water API running on ${port}`);
