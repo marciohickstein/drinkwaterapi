@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {showRequest, parserData, getDate} = require('../utils')
-const fs = require('fs');
+const {readFile} = require('fs');
 
 var DEFAULT_NOTIFICATION_START = '08:30';
 var DEFAULT_NOTIFICATION_END = '22:30';
@@ -18,7 +18,7 @@ function getMinute(time){
 router.get("/", (req, res) => {
     showRequest(req);
 
-    fs.readFile("notification.json", (err, data) => {
+    readFile("notification.json", (err, data) => {
         let notification = err ? {} : parserData(data);
         let reminder = {};
         console.log("notification: "+ notification);

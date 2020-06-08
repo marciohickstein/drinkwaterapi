@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {showRequest, response, parserData, getDate} = require('../utils')
-const fs = require('fs');
+const {readFile, writeFile} = require('fs');
 
 function getFileName(){
     let strDateAndTime = getDate().toISOString();
@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
     showRequest(req);
 
     let filename = getFileName();
-    fs.readFile(filename, (err, data) => {
+    readFile(filename, (err, data) => {
         let consumption = err ? {} : parserData(data);
 
         if (consumption == null)
@@ -30,7 +30,7 @@ router.post("/", (req,res) => {
 
     let filename = getFileName();
     
-    fs.readFile(filename, (err, dataFile) => {
+    readFile(filename, (err, dataFile) => {
         let dataObject = { date: [] };
 
         if (!err)
@@ -38,7 +38,7 @@ router.post("/", (req,res) => {
 
         dataObject.date.push(req.body);
         let dataToWrite = JSON.stringify(dataObject);
-        fs.writeFile(filename, dataToWrite, (err) => {
+        writeFile(filename, dataToWrite, (err) => {
             let ret;
 
             if (err)
@@ -57,7 +57,7 @@ router.delete("/:id", (req,res) => {
 
     let filename = getFileName();
     
-    fs.readFile(filename, (err, dataFile) => {
+    readFile(filename, (err, dataFile) => {
         let dataObject = { date: [] };
 
         if (!err)
@@ -72,7 +72,7 @@ router.delete("/:id", (req,res) => {
             removed = dataObject.date.splice(position-1, 1);
             let dataToWrite = JSON.stringify(dataObject);
 
-            fs.writeFile(filename, dataToWrite, (err) => {
+            writeFile(filename, dataToWrite, (err) => {
                 if (err)
                     removed = response(1, "Nao foi possivel salvar os dados na base");
             })
