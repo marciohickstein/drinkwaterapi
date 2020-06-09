@@ -1,13 +1,12 @@
-const fs = require('fs');
+const {readFile, writeFile} = require('fs');
 const express = require('express');
 const router = express.Router();
 const {response} = require('../utils')
-const {showRequest} = require('../utils')
+const {logRequest} = require('../utils')
 
 // Rotas para retornar e salvar os dados do perfil
-router.get("/", (req, res) => {
-    showRequest(req);
-    fs.readFile("perfil.json", (err, data) => {
+router.get("/", logRequest, (req, res) => {
+    readFile("perfil.json", (err, data) => {
         let perfil = err ? {} : JSON.parse(data);
         console.log(`Send: ${JSON.stringify(perfil)}`);
         res.json(perfil);
@@ -15,11 +14,8 @@ router.get("/", (req, res) => {
 
 })
 
-router.post("/", (req, res) => {
+router.post("/", logRequest, (req, res) => {
     const data = JSON.stringify(req.body);
-
-    showRequest(req, data);
-
     const {email, passwd, weight} = req.body;
 
     if (!email || !passwd || !weight)
@@ -28,7 +24,7 @@ router.post("/", (req, res) => {
         return ;
     }
 
-    fs.writeFile("perfil.json", data, (err) => {
+    writeFile("perfil.json", data, (err) => {
         let ret;
         if (err)
             ret = response(1, "Nao foi possivel salvar os dados na base");

@@ -1,4 +1,4 @@
-const fs = require('fs');
+const {readFileSync} = require('fs');
 const DEFAULT_INTERVAL = '00:15'; // Interval 15min
 
 // Read configurations
@@ -7,7 +7,7 @@ function readConfigurationInterval(){
     let data, object;
     
     try {
-        data = fs.readFileSync('notification.json');
+        data = readFileSync('notification.json');
         object = parserData(data);
     
         timeToReminder = object ? object.interval : DEFAULT_INTERVAL;
@@ -49,9 +49,23 @@ function showRequest(request, data){
     console.log(`Recv: [${request.method}] ${request.baseUrl} ${data ? "[DATA] " + data : ''  }`);
 }
 
+// Format request received to output
+function logRequest(req, res, next){
+console.log(req.body)
+    const data = Object.keys(req.body).length != 0 ? JSON.stringify(req.body) : '';
+    console.log(`Recv: [${req.method}] ${req.baseUrl} ${data ? "[DATA] " + data : ''  }`);
+    return next();
+}
+
 // Resources exported
+module.exports = {response, showRequest, parserData, getDate, readConfigurationInterval, logRequest};
+/*
 module.exports.response = response;
 module.exports.showRequest = showRequest;
 module.exports.parserData = parserData;
 module.exports.getDate = getDate;
 module.exports.readConfigurationInterval = readConfigurationInterval;
+module.exports.logRequest = logRequest;
+*/
+
+
