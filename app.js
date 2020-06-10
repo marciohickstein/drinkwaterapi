@@ -1,7 +1,6 @@
 const PORT_DEFAULT = 8000;
 
 // Requires
-const {readFile} = require("fs");
 const express = require("express");
 //const cors = require('cors');
 const app = express();
@@ -34,12 +33,7 @@ reminderConnection(io, timeInterval);
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
-    readFile("./client/error404.html", (err, data) => {
-        if (err)
-            res.status(404).send('Erro 404<br>Página NÃO econtrada');
-        else
-            res.status(404).send(data.toString());
-    })
+    res.sendFile(__dirname+'/client/error404.html');
 });
 
 server.listen(port, () => {

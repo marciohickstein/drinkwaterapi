@@ -59,13 +59,5 @@ console.log(req.body)
 
 // Resources exported
 module.exports = {response, showRequest, parserData, getDate, readConfigurationInterval, logRequest};
-/*
-module.exports.response = response;
-module.exports.showRequest = showRequest;
-module.exports.parserData = parserData;
-module.exports.getDate = getDate;
-module.exports.readConfigurationInterval = readConfigurationInterval;
-module.exports.logRequest = logRequest;
-*/
 
 
