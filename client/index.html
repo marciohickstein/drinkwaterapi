@@ -6,6 +6,7 @@
     <title>Drink Water</title>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" >
     <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -74,6 +75,37 @@
         </div>        
         <!-- JANELA MODAL PARA EDITAR E REMOVER ITEM DE CONSUMO -->
 
+        <!-- JANELA MODAL PARA LEMBRETE -->
+        <!-- Definicao do modal 2 -->
+        <div class="modal" id="modal-reminder" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Lembrete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body row">
+                        <div class="col-3">
+                            <img id="val-image" src="assets/img/drinkwater.png" height="50px" alt="Glass of Water">
+                            <span id="val-id" style="visibility: hidden;"></span>
+                        </div>
+                        <div class="col-9">
+                            <div>
+                                <h5 id="val-time" class="text-bold">Beba Água...</h6>
+                                <p id="val-quantity" class="">Não esqueça de beber água!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btn-soneca" class="btn btn-primary"  data-dismiss="modal">Soneca</button>
+                    </div>
+                </div>
+            </div>
+        </div>        
+        <!-- JANELA MODAL PARA EDITAR E REMOVER ITEM DE CONSUMO -->
+
         <!-- CONTEUDO PRINCIPAL: OPEN -->
         <main>
             <!-- DIV DE GRFICOS -->
@@ -89,47 +121,37 @@
                     <div  id="progress-bar" class="progress-bar" rule="progressbar"></div>
                 </div>
                 <!-- <img class="img-fluid" src="assets/img/drinkwater.png" alt="" width="500"> -->
-                <div id="listItem" class="d-flex bg-light p-3 flex-wrap align-items-around" style="height: 320px;">
+                <div id="listItem" class="d-flex bg-light p-3 flex-wrap align-items-baseline" style="height: 370px;">
                 </div>
 
-                <div style="min-height: 80px;" class="row">
+                <div class="d-flex justify-content-center m-1">
+                    <span id="processando" style="visibility: hidden" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <span class="sr-only">Loading...</span>
+                </div>
 
-                    <div class="col-4 text-center">
-                        <div id="processando" style="visibility: hidden;" class="spinner-border text-primary" role="status">
-                            <span class="sr-only">Processando...</span>
-                        </div>
-                    </div>
+                <div style="min-height: 80px;" class="row m-1">
 
-                    <div class="col-4 text-center">
-                        <button type="button" data-toggle="collapse" data-target="#option" class="btn btn-primary btn-circle"><i class="fas fa-plus"></i></button>
-                        <div id="option" class="collapse m">
-                            <figure id="glass" class="figure active" title="Copo d'agua">
+                    <div class="col text-center">
+                        <button type="button" data-toggle="collapse" data-target="#option" class="btn btn-primary btn-circle" style="min-height: 45px; min-width: 40px">
+                            <i class="fas fa-plus"></i>
+                        </button>
+
+                        <div id="option" class="collapse">
+                            <figure id="glass" class="figure fig" title="Copo d'agua">
                                 <img src="assets/img/glass.png"  alt="" width="40px" height="40px">
                                 <figcaption class="figurecaption text-muted"><div><small>200ml</small></div></figcaption>
                             </figure>
-                            <figure id="bottle" class="figure" title="Garrafa">
+                            <figure id="bottle" class="figure fig" title="Garrafa">
                                 <img src="assets/img/bottle.png"  alt="" width="40px" height="40px">
                                 <figcaption class="figurecaption text-muted"><div><small>500ml</small></div></figcaption>
                             </figure>
-                            <figure id="jar" class="figure" title="Jarra d'agua">
+                            <figure id="jar" class="figure fig" title="Jarra d'agua">
                                 <img src="assets/img/jar.png" alt="Jarra d'agua" title="Jarra d'agua" width="40px" height="40px">
                                 <figcaption class="figurecaption text-muted"><div><small>1200ml</small></div></figcaption>
                             </figure>
                         </div>
                     </div>
 
-                    <div class="col-4">
-                        <div class="toast">
-                            <div class="toast-header bg-secondary text-white">
-                                <strong class="mr-auto">Aviso</strong>
-                                <small>;)</small>
-                                <button type="button" data-dismiss="toast" class="ml-2 close">&times;</button>
-                            </div>
-                            <div class="toast-body">
-                                Não esqueça de beber água!
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
 
@@ -215,8 +237,9 @@
         })
 
         socket.on('reminder', () => {
-            console.log("receive message event reminder")
-            $('.toast').toast('show');
+            let date = new Date();
+            console.log(`message received from event reminder at ${date.toLocaleString()} `);
+            $("#modal-reminder").modal("show");
         })
     </script>
 </body>

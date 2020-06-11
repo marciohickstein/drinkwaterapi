@@ -3,6 +3,8 @@ const EVENT_REMINDER = 'reminder';
 var timers = new Map();
 
 function showTimers(){
+    if (timers.size === 0)
+        console.log("Timers empty")
     for (var [ key, value ] of timers){
         console.log(`${key}=${value}`);
     }
@@ -22,6 +24,7 @@ function reminderStartTimer(socket, timeInterval){
 function reminderStopTimer(socket){
     console.log(`Stop timer reminder...`)
     let timerInterval = timers.get(socket.id);
+    timers.delete(socket.id);
     showTimers();
     clearInterval(timerInterval);
 }

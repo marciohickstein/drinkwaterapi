@@ -310,44 +310,6 @@ $(() => {
     })
 
     showConsumption();
-/*
-    setInterval(() => {
-        fetch(`http://${host}:${port}/reminder`)
-        .then((response) => {
-            response.json()
-            .then((result) => {
-                // console.log(result);
-                let now = Date.now();
-                let hour = parseInt(result.interval.split(':')[0]);
-                let minute = parseInt(result.interval.split(':')[1]);
-
-                if (interval != result.interval){
-                    nextReminder = 0;
-                    interval = result.interval;
-                }
-
-                console.log("now: " + now);
-                console.log("nxt: " + nextReminder);
-                console.log("Now: " + new Date(now));
-                console.log("Prx: " + new Date(nextReminder));
-
-                if (result && now >= nextReminder)
-                {
-
-                    nextReminder = now + ((hour * 3600 + minute * 60) * 1000);
-                    console.log("now: " + now);
-                    console.log("nxt: " + nextReminder);
-                    console.log("Proximo calculado lembrete: " + new Date(nextReminder));
-                    $('.toast').toast('show');
-                }
-            })
-        })
-        .catch((err) => {
-            console.error(err);
-        })
-    }, 1000);
-*/
-    $('.toast').toast({animation: false, autohide: true, delay: 15000});
 
     calculateTotalConsumption();
 })
