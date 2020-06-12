@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {showRequest, parserData, getDate} = require('../utils')
+const {logRequest, showRequest, parserData, getDate} = require('../utils')
 const {readFile} = require('fs');
 
 var DEFAULT_NOTIFICATION_START = '08:30';
