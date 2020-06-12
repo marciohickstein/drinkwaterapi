@@ -51,7 +51,6 @@ function showRequest(request, data){
 
 // Format request received to output
 function logRequest(req, res, next){
-console.log(req.body)
     const data = Object.keys(req.body).length != 0 ? JSON.stringify(req.body) : '';
     console.log(`Recv: [${req.method}] ${req.baseUrl} ${data ? "[DATA] " + data : ''  }`);
     return next();

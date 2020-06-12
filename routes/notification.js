@@ -2,11 +2,10 @@ const {readFile, writeFile} = require('fs');
 const express = require('express');
 const router = express.Router();
 const {response} = require('../utils')
-const {showRequest} = require('../utils')
+const {logRequest} = require('../utils')
 
 // Rotas para retornar e salvar os dados de notificacao
-router.get("/", (req, res) => {
-    showRequest(req);
+router.get("/", logRequest, (req, res) => {
     readFile("notification.json", (err, data) => {
         let notification = err ? {} : JSON.parse(data);
         console.log(`Send: ${JSON.stringify(notification)}`);
@@ -14,16 +13,14 @@ router.get("/", (req, res) => {
     })
 })
 
-router.post("/", (req, res) => {
-    const data = JSON.stringify(req.body);
-
-    showRequest(req, data);
-
+router.post("/", logRequest, (req, res) => {
     let notificationValidation = req.body;
 
     if (notificationValidation.start.length <= 0 || notificationValidation.end.length <= 0 || notificationValidation.interval.length <= 0)
         return response(1, "Dados enviados no formato invalido");
     
+    const data = JSON.stringify(notificationValidation);
+
     writeFile("notification.json", data, (err) => {
         let cod = 0, msg = "Dados foram salvos com sucesso";
 
