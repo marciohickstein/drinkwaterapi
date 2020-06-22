@@ -49,7 +49,6 @@ router.post("/", logRequest, async (req,res) => {
 
 router.delete("/:id", logRequest, (req,res) => {
     try {
-console.log(req.params.id);
         Consumption.findByIdAndRemove(req.params.id, (error) => {
             if (error)
                 return  res.status(500).json({message: error.message});
