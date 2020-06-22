@@ -4,7 +4,23 @@ var url = window.location.origin;
 var interval = '00:00', nextReminder = Date.now();
 
 // Faz chamadas REST no servidor para buscar os dados
-function sendHttpRest(path, method, data){
+function sendGetRest(url, callback) {
+    console.log(`Enviando transação para o servidor: [GET] ${url}`);
+    fetch(url)
+    .then((response) => {
+        if (response.status !== 200)
+            throw new Error(`${response.status} (${response.statusText})`);
+        response.json().then((data) => {
+            console.log(`Dados retornado da transação com o servidor: ${JSON.stringify(data)}`);
+            callback(null, data); 
+        });
+    })
+    .catch(function(err){ 
+        callback(err, null);
+    });
+}
+
+function sendHttpRest(path, method, data, callbackSuccess){
     $.ajax({
         url: `${url}/${path}`,
         type: method,
@@ -12,11 +28,13 @@ function sendHttpRest(path, method, data){
         processData: false,
         contentType: "application/json; charset=UTF-8",
         beforeSend : function(){
-            console.log("Enviando transação para o servidor: " + this.url);
+            console.log(`Enviando transação para o servidor: [${method}] ${this.url}`);
             $("#processando")[0].style.visibility = 'visible';
         },
         success: function(data){
             console.log(`Dados retornado da transação com o servidor: ${JSON.stringify(data)}`);
+            if (callbackSuccess)
+                callbackSuccess(data);
             $("#processando")[0].style.visibility = 'hidden';
         },
         error: function(xhr, ajaxOptions, thrownError) {
@@ -51,29 +69,44 @@ function showPerfil(){
     getPerfil();
 }
 
-function getPerfil(){
-	let urlRest = `${url}/perfil`;
+let perfilNotExists = true;
 
-	console.log(urlRest);
-	$.getJSON(`${urlRest}`,function (data) {
-        $('#email').val(data.email);
-        $('#passwd').val(data.passwd);
-        $('#weight').val(data.weight);
+function getPerfil(){
+    let urlRest = `${url}/perfil/1`;
+
+    sendGetRest(`${urlRest}`,function (error, data) {
+        if (error){
+            $('#email').val('');
+            $('#passwd').val('');
+            $('#weight').val('');
+            console.log(error);
+            perfilNotExists = true;
+        }else{
+            $('#email').val(data.email);
+            $('#passwd').val(data.passwd);
+            $('#weight').val(data.weight);
+            perfilNotExists = false;
+        }
       });
 }
 
 function savePerfil(){
+    const idValue = 1;
     const emailValue = $('#email').val();
     const passwdValue = $('#passwd').val();
     const weightValue = $('#weight').val();
-    let data = { email: emailValue, passwd: passwdValue, weight: weightValue };
+    let data = { id: idValue, email: emailValue, passwd: passwdValue, weight: weightValue };
 
-    sendHttpRest("perfil", "POST", data);
+    let url = perfilNotExists ? `perfil` : `perfil/${idValue}`;
+    let method = perfilNotExists ? "POST" : "PATCH";
+
+    sendHttpRest(url, method, data);
+    perfilNotExists = false;
 }
 
 function calculateTotalConsumption(){
     let qntByWeight = 35;
-    $.getJSON(`${url}/perfil`,function (data) {
+    $.getJSON(`${url}/perfil/1`,function (data) {
         total = qntByWeight * parseInt(data.weight);
     });
 }
@@ -85,21 +118,36 @@ function showNotification(){
     getNotification();
 }
 
+let notificationNotExists = true;
+
 function getNotification(){
-    $.getJSON(`${url}/notification`, (data) => {
-        $('#start').val(data.start);
-        $('#end').val(data.end);
-        $('#interval').val(data.interval);
+    sendGetRest(`${url}/notification/1`, (error, data) => {
+        if (error){
+            $('#start').val('');
+            $('#end').val('');
+            $('#interval').val('');
+            console.error(error);
+            notificationNotExists = true;
+        }else{
+            $('#start').val(data.start);
+            $('#end').val(data.end);
+            $('#interval').val(data.interval);
+            notificationNotExists = false;
+        }
     });
 }
 
 function saveNotification(){
+    const idValue = 1;
     const startValue = $('#start').val();
     const endValue = $('#end').val();
     const intervalValue = $('#interval').val();
-    let data = { start: startValue, end: endValue, interval: intervalValue };
+    let data = { id: idValue, start: startValue, end: endValue, interval: intervalValue };
 
-    sendHttpRest("notification", "POST", data);
+    let url = notificationNotExists ? `notification` : `notification/${idValue}`
+    let method = notificationNotExists ? "POST" : "PATCH";
+
+    sendHttpRest(url, method, data);
 }
 
 // DADOS DE CONSUMO DE AGUA: Funcoes para exibir, obter e salvar os dados.
@@ -112,21 +160,30 @@ function showConsumption(){
     getConsumption();
 };
 
+let consumptionNotExists = true;
+
 function getConsumption(){
-    $.getJSON(`${url}/water-consumption`, (data) => {
-        if (data && data.date)
+    sendGetRest(`${url}/water-consumption`, (error, data) => {
+        if (error)
         {
-            data.date.forEach(item => {
-                addItemPanel($(`#${item.type}`).clone(), item.time.substring(0,5));
+            // Limpa painel de consumo
+            // $('#listItem').empty();
+            consumptionNotExists = true;
+        }else{
+            // Preenche os dados no painel de consumo
+            data.forEach(item => {
+                addItemPanel(item._id, $(`#${item.type}`).clone(), item.time.substring(0,5));
                 updateStatusBar(item.quantity);
             });
+
+            consumptionNotExists = true;
         }
     });
 }
 
 function removeConsumption(id){
-    let index = id.split('-')[1];
-    sendHttpRest(`water-consumption/${index}`, "DELETE", {});
+    let _id = id.split('-')[1];
+    sendHttpRest(`water-consumption/${_id}`, "DELETE", {});
 }
 
 function updateStatusBar(quantity){
@@ -148,12 +205,12 @@ function updateStatusBar(quantity){
     $('#progress-bar').css("width", percentText);
 }
 
-function addItemPanel(item, time){
+function addItemPanel(_id, item, time){
     let component = item.find("figcaption");
     component.append(`<div><small>${time}</small></div>`);
 
     let id = item.attr('id');
-    item.attr('id', `${id}-${++totalPanelItems}`);
+    item.attr('id', `${id}-${_id}`);
     item.on('click', (e) => {
         let id = item.attr('id');
 
@@ -176,9 +233,10 @@ function clickAddItem(item){
     consumption.quantity = quantity;
     consumption.time = getHMS(dateTime);
 
-    sendHttpRest("water-consumption", "POST", consumption);
-    addItemPanel(item, getHM(dateTime));
-    updateStatusBar(quantity);
+    sendHttpRest("water-consumption", "POST", consumption, (data) => {
+        addItemPanel(data._id, item, getHM(dateTime));
+        updateStatusBar(quantity);
+    });
 }
 
 function renderChart(data, labels) {
@@ -299,14 +357,6 @@ $(() => {
         
         let value = parseInt($("#val-quantity")[0].innerHTML);
         updateStatusBar(-value);
-        let items = $("#listItem").children();
-
-        for (let index = 0; index < items.length; index++) {
-            const element = items[index];
-            const item = element.id.split("-");
-
-            element.id = `${item[0]}-${index+1}`;
-        }
     })
 
     showConsumption();

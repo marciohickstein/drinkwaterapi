@@ -1,6 +1,8 @@
+require('dotenv').config();
 const PORT_DEFAULT = 8000;
 
 // Requires
+const mongoose = require("mongoose");
 const express = require("express");
 //const cors = require('cors');
 const app = express();
@@ -35,6 +37,12 @@ reminderConnection(io, timeInterval);
 app.get('*', function(req, res){
     res.sendFile(__dirname+'/client/error404.html');
 });
+
+mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
+const db = mongoose.connection;
+
+db.on('error', (err) => { console.log()});
+db.on('open', () => console.log("Database conneted!"));
 
 server.listen(port, () => {
     console.log(`Server Drink Water API running on ${port}`);

@@ -1,86 +1,64 @@
 const express = require('express');
 const router = express.Router();
-const {showRequest, response, parserData, getDate} = require('../utils')
-const {readFile, writeFile} = require('fs');
+const {logRequest, response, parserData, getDate} = require('../utils');
+const Consumption = require('../models/consumption');
+const consumption = require('../models/consumption');
 
-function getFileName(){
-    let strDateAndTime = getDate().toISOString();
-    let dateAndTime = strDateAndTime.split('T');
+router.get("/", logRequest, async (req, res) => {
+    try {
+        let localeDateString = new Date().toLocaleDateString();
+        let localeDate = new Date(localeDateString);
 
-    return `water-consumption-${dateAndTime[0]}.json`;
-}
+        console.log(localeDate.toISOString());
+        let filterDate = localeDate.toISOString().split('T')[0];
+        // let filterDateStart = '2020-06-21T00:00:00'
+        // let filterDateEnd = '2020-06-21T23:59:59'
+        let filterDateStart = filterDate+'T00:00:00'
+        let filterDateEnd = filterDate+'T23:59:59'
 
-router.get("/", (req, res) => {
-    showRequest(req);
+        console.log(`{ date: { $gte: ${filterDateStart}, $lte: ${filterDateEnd } }`)
+        consumptions = await Consumption.find({ date: { $gte: filterDateStart, $lte: filterDateEnd } });
 
-    let filename = getFileName();
-    readFile(filename, (err, data) => {
-        let consumption = err ? {} : parserData(data);
-
-        if (consumption == null)
-            consumption = {};
-        console.log(`Send: ${JSON.stringify(consumption)}`);
-        res.json(consumption);
-    })
-
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+    console.log(`Send: ${JSON.stringify(consumptions)}`);
+    res.json(consumptions);
 })
 
-router.post("/", (req,res) => {
-    showRequest(req, req.body);
+router.post("/", logRequest, async (req,res) => {
+    const {type, quantity, time} = req.body;
 
-    let filename = getFileName();
-    
-    readFile(filename, (err, dataFile) => {
-        let dataObject = { date: [] };
+    let localeDateString = new Date().toLocaleDateString();    
 
-        if (!err)
-            dataObject = parserData(dataFile.toString());
 
-        dataObject.date.push(req.body);
-        let dataToWrite = JSON.stringify(dataObject);
-        writeFile(filename, dataToWrite, (err) => {
-            let ret;
-
-            if (err)
-                ret = response(1, "Nao foi possivel salvar os dados na base");
-            else 
-                ret = response(0, "Dados foram salvos com sucesso");
-    
-            console.log(`Send: ${JSON.stringify(ret)}`);
-            res.json(ret);
-        })
+    const consumption = new Consumption({
+        type: type,
+        quantity: quantity,
+        time: time,
+        date: new Date(localeDateString)
     })
+
+    try {
+        const newConsumption = await consumption.save();
+        res.status(200).json(newConsumption);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
 })
 
-router.delete("/:id", (req,res) => {
-    showRequest(req);
+router.delete("/:id", logRequest, (req,res) => {
+    try {
+console.log(req.params.id);
+        Consumption.findByIdAndRemove(req.params.id, (error) => {
+            if (error)
+                return  res.status(500).json({message: error.message});
 
-    let filename = getFileName();
-    
-    readFile(filename, (err, dataFile) => {
-        let dataObject = { date: [] };
-
-        if (!err)
-            dataObject = parserData(dataFile.toString());
-
-        let position = req.params.id;
-
-        let removed = {};
-
-        if (position > 0 && position <= dataObject.date.length)
-        {
-            removed = dataObject.date.splice(position-1, 1);
-            let dataToWrite = JSON.stringify(dataObject);
-
-            writeFile(filename, dataToWrite, (err) => {
-                if (err)
-                    removed = response(1, "Nao foi possivel salvar os dados na base");
-            })
-        }
-        console.log(`Send: ${JSON.stringify(removed)}`);
-        res.json(removed);
-    })
+            res.json({message: "Item removed"});
+        });
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
 })
-
 
 module.exports.routerWaterConsumption = router;

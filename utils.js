@@ -19,7 +19,7 @@ function readConfigurationInterval(){
     return timeToReminder;
 }
 
-// Get date no timezone Brazil Sap Paulo
+// Get date no timezone Brazil Sao Paulo
 function getDate(){
     const dateString = new Date().toLocaleString('en-us',
     {
@@ -52,7 +52,7 @@ function showRequest(request, data){
 // Format request received to output
 function logRequest(req, res, next){
     const data = Object.keys(req.body).length != 0 ? JSON.stringify(req.body) : '';
-    console.log(`Recv: [${req.method}] ${req.baseUrl} ${data ? "[DATA] " + data : ''  }`);
+    console.log(`Recv: [${req.method}] ${req.originalUrl} ${data ? "[DATA] " + data : ''  }`);
     return next();
 }
 
