@@ -41,7 +41,7 @@ app.get('*', function(req, res){
 mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
-db.on('error', (err) => { console.log()});
+db.on('error', (err) => { console.log("Error to connect database!")});
 db.on('open', () => console.log("Database connected!"));
 
 server.listen(port, () => {
