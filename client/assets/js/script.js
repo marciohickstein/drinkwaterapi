@@ -1,3 +1,5 @@
+//const socketReminder = require("../../../socket-reminder");
+
 var total = 5000;
 var totalPanelItems = 0;
 var url = window.location.origin;
@@ -236,6 +238,8 @@ function clickAddItem(item){
     sendHttpRest("water-consumption", "POST", consumption, (data) => {
         addItemPanel(data._id, item, getHM(dateTime));
         updateStatusBar(quantity);
+        socket.emit('resetreminder', '');
+        console.log("Send reminder to server reset reminder: " + socket.id);
     });
 }
 
@@ -248,8 +252,8 @@ function renderChart(data, labels) {
         let hour = 0;
         let subtotal = 0;
 
-        if (data && data.date){
-            data.date.forEach((item) => {
+        if (data){
+            data.forEach((item) => {
                 subtotal += item.quantity;
                 hour = parseInt(item.time.substring(0, 2));
                 values[hour] = subtotal;

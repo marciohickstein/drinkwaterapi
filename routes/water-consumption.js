@@ -3,20 +3,17 @@ const router = express.Router();
 const {logRequest, response, parserData, getDate} = require('../utils');
 const Consumption = require('../models/consumption');
 const consumption = require('../models/consumption');
+const {showTimers} = require('../socket-reminder.js')
 
 router.get("/", logRequest, async (req, res) => {
     try {
         let localeDateString = new Date().toLocaleDateString();
         let localeDate = new Date(localeDateString);
 
-        console.log(localeDate.toISOString());
         let filterDate = localeDate.toISOString().split('T')[0];
-        // let filterDateStart = '2020-06-21T00:00:00'
-        // let filterDateEnd = '2020-06-21T23:59:59'
         let filterDateStart = filterDate+'T00:00:00'
         let filterDateEnd = filterDate+'T23:59:59'
 
-        console.log(`{ date: { $gte: ${filterDateStart}, $lte: ${filterDateEnd } }`)
         consumptions = await Consumption.find({ date: { $gte: filterDateStart, $lte: filterDateEnd } });
 
     } catch (error) {
@@ -31,7 +28,7 @@ router.post("/", logRequest, async (req,res) => {
 
     let localeDateString = new Date().toLocaleDateString();    
 
-
+    showTimers();
     const consumption = new Consumption({
         type: type,
         quantity: quantity,
@@ -41,6 +38,7 @@ router.post("/", logRequest, async (req,res) => {
 
     try {
         const newConsumption = await consumption.save();
+        console.log(`Send: ${JSON.stringify(newConsumption)}`);
         res.status(200).json(newConsumption);
     } catch (error) {
         res.status(500).json({message: error.message});
@@ -50,10 +48,17 @@ router.post("/", logRequest, async (req,res) => {
 router.delete("/:id", logRequest, (req,res) => {
     try {
         Consumption.findByIdAndRemove(req.params.id, (error) => {
-            if (error)
-                return  res.status(500).json({message: error.message});
+            let response;
 
-            res.json({message: "Item removed"});
+            if (error){
+                response = {message: error.message};
+                console.log(`Send: ${JSON.stringify(response)}`);
+                return res.status(500).json(response);
+            }
+            
+            response = {message: "Item removed"};
+            console.log(`Send: ${JSON.stringify(response)}`);
+            res.json(response);
         });
     } catch (error) {
         res.status(500).json({message: error.message});

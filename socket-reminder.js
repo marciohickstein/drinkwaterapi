@@ -1,4 +1,5 @@
-const EVENT_REMINDER = 'reminder';
+const EVENT_REMINDER =      'reminder';
+const EVENT_RESET_TIMER =   'resetreminder';
 
 var timers = new Map();
 
@@ -37,7 +38,12 @@ function reminderConnection(io, timeInterval){
             console.log(`Client ${socket.id} disconnected.`)
             reminderStopTimer(socket);
         });
+        socket.on(EVENT_RESET_TIMER, function() {
+            console.log(`Stop timer ${socket.id}.`)
+            reminderStopTimer(socket);
+            reminderStartTimer(socket, timeInterval);
+        });
     })
 }
 
-module.exports.reminderConnection = reminderConnection;
+module.exports = {reminderConnection, showTimers};

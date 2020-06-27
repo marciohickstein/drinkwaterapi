@@ -42,7 +42,7 @@ mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnified
 const db = mongoose.connection;
 
 db.on('error', (err) => { console.log()});
-db.on('open', () => console.log("Database conneted!"));
+db.on('open', () => console.log("Database connected!"));
 
 server.listen(port, () => {
     console.log(`Server Drink Water API running on ${port}`);
