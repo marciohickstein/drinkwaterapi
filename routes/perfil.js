@@ -73,7 +73,7 @@ async function getPerfil(req, res, next) {
         if (perfil == null)
             return res.status(404).json({message: `Perfil ${id} não encontrado`});
     } catch (error) {
-        console.log(error.message);
+        //console.log(error.message);
         return res.status(400).json({message: error.message});
     }
 
