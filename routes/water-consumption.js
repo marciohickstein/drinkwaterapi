@@ -5,12 +5,16 @@ const Consumption = require('../models/consumption');
 const consumption = require('../models/consumption');
 const {showTimers} = require('../socket-reminder.js')
 
+function getDateTodayISOString(){
+    let localeDate = new Date(new Date().toLocaleDateString());
+    
+    return localeDate.toISOString().split('T')[0];
+}
+
 router.get("/", logRequest, async (req, res) => {
     try {
-        let localeDateString = new Date().toLocaleDateString();
-        let localeDate = new Date(localeDateString);
+        let filterDate = req.query.date ? req.query.date : getDateTodayISOString();
 
-        let filterDate = localeDate.toISOString().split('T')[0];
         let filterDateStart = filterDate+'T00:00:00'
         let filterDateEnd = filterDate+'T23:59:59'
 
@@ -24,7 +28,7 @@ router.get("/", logRequest, async (req, res) => {
 })
 
 router.post("/", logRequest, async (req,res) => {
-    const {type, quantity, time} = req.body;
+    const {type, quantity, time, date} = req.body;
 
     let localeDateString = new Date().toLocaleDateString();    
 
@@ -33,7 +37,7 @@ router.post("/", logRequest, async (req,res) => {
         type: type,
         quantity: quantity,
         time: time,
-        date: new Date(localeDateString)
+        date: date ? date : new Date(localeDateString)
     })
 
     try {

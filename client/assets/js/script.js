@@ -153,19 +153,26 @@ function saveNotification(){
 }
 
 // DADOS DE CONSUMO DE AGUA: Funcoes para exibir, obter e salvar os dados.
-function showConsumption(){
-    $("#day").show();
-    $('#btnDay').addClass("active");
+function clearPanelConsumption(){
     $('#listItem').empty();
     totalPanelItems = 0;
     updateStatusBar(0);
+}
+
+function showConsumption(){
+    $("#divConsumption").show();
+    $('#btnDay').addClass("active");
+    clearPanelConsumption();
     getConsumption();
 };
 
 let consumptionNotExists = true;
 
 function getConsumption(){
-    sendGetRest(`${url}/water-consumption`, (error, data) => {
+    let dateConsumption = $('#dateConsumption').val();
+    let queryDate = dateConsumption ? `?date=${dateConsumption}` : "";
+
+    sendGetRest(`${url}/water-consumption${queryDate}`, (error, data) => {
         if (error)
         {
             // Limpa painel de consumo
@@ -234,6 +241,7 @@ function clickAddItem(item){
     consumption.type = item.attr('id');
     consumption.quantity = quantity;
     consumption.time = getHMS(dateTime);
+    consumption.date = $('#dateConsumption').val() ? $('#dateConsumption').val() : "";
 
     sendHttpRest("water-consumption", "POST", consumption, (data) => {
         addItemPanel(data._id, item, getHM(dateTime));
@@ -244,7 +252,10 @@ function clickAddItem(item){
 }
 
 function renderChart(data, labels) {
-    $.getJSON(`${url}/water-consumption`, (data)=>{
+    let dateConsumption = $('#dateChart').val();
+    let queryDate = dateConsumption ? `?date=${dateConsumption}` : "";
+
+    $.getJSON(`${url}/water-consumption${queryDate}`, (data)=>{
         const canvas = document.getElementById("myChart").getContext('2d');
         let labels =  ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
         let values =  [ 0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ];
@@ -318,7 +329,7 @@ $(() => {
     })
 
     $("#btnChart").on('click', e => {
-        $("#day").hide();
+        $("#divConsumption").hide();
         $("#conf").hide();
         $("#notification").hide();
         showChart();
@@ -331,16 +342,24 @@ $(() => {
     });
     $("#mnPerfil").on('click', e => {
         $("#chart").hide();
-        $("#day").hide();
+        $("#divConsumption").hide();
         $("#notification").hide();
         showPerfil();
     });
     $("#mnNotification").on('click', e => {
         $("#chart").hide();
-        $("#day").hide();
+        $("#divConsumption").hide();
         $("#conf").hide();
         showNotification();
     });
+    $('#dateConsumption').on('change', e => {
+       clearPanelConsumption();
+       getConsumption();
+    })
+
+    $('#dateChart').on('change', e=>{
+        renderChart();
+    })
 
     $('#glass').on('click', (e) => {
         clickAddItem($('#glass').clone());
