@@ -1,5 +1,4 @@
 require('dotenv').config();
-const PORT_DEFAULT = 8000;
 
 // Requires
 const mongoose = require("mongoose");
@@ -24,7 +23,6 @@ app.use('/water-consumption', routerWaterConsumption);
 app.use('/reminder', routerReminder);
 
 // Main
-let port = PORT_DEFAULT;
 
 // Call readConfigurationInterval is Sync and wait to conclusion.
 let timeInterval = readConfigurationInterval();
@@ -43,6 +41,8 @@ const db = mongoose.connection;
 
 db.on('error', (err) => { console.log("Error to connect database!")});
 db.on('open', () => console.log("Database connected!"));
+
+let port = process.env.PORT_DEFAULT;
 
 server.listen(port, () => {
     console.log(`Server Drink Water API running on ${port}`);
