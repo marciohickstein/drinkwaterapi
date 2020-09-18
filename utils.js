@@ -19,15 +19,6 @@ function readConfigurationInterval(){
     return timeToReminder;
 }
 
-// Get date no timezone Brazil Sao Paulo
-function getDate(){
-    const dateString = new Date().toLocaleString('en-us',
-    {
-        timeZone: 'America/Sao_Paulo'
-    });
-    return new Date(dateString);
-}
-
 // Return string JSON to Object
 function parserData(data){
     let dataParsed = null;
@@ -57,6 +48,6 @@ function logRequest(req, res, next){
 }
 
 // Resources exported
-module.exports = {response, showRequest, parserData, getDate, readConfigurationInterval, logRequest};
+module.exports = { response, showRequest, parserData, readConfigurationInterval, logRequest };
 
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {logRequest, response, parserData, getDate} = require('../utils');
+const { logRequest, response, parserData } = require('../utils');
 const Consumption = require('../models/consumption');
 const consumption = require('../models/consumption');
 const {showTimers} = require('../socket-reminder.js')
