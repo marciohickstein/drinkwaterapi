@@ -4,7 +4,7 @@ const DEFAULT_INTERVAL = '00:15'; // Interval 15min
 // Read configurations
 function readConfigurationInterval(){
     // Get interval of the reminder
-    let data, object;
+    let data, object, timeToReminder;
     
     try {
         data = readFileSync('notification.json');
@@ -25,14 +25,16 @@ function parserData(data){
     
     try{
         dataParsed = JSON.parse(data);
-    }catch(err){}
+    }catch(err){
+        dataParsed = {};
+    }
 
     return dataParsed;
 }
 
 // Format response JSON
 function response(cod, response){
-    return {"codret": cod, "msgret": response};
+    return { "codret": cod, "msgret": response};
 }
 
 // Format request received to output
@@ -42,8 +44,8 @@ function showRequest(request, data){
 
 // Format request received to output
 function logRequest(req, res, next){
-    const data = Object.keys(req.body).length != 0 ? JSON.stringify(req.body) : '';
-    console.log(`Recv: [${req.method}] ${req.originalUrl} ${data ? "[DATA] " + data : ''  }`);
+    const data = Object.keys(req.body).length != 0 ? JSON.stringify(req.body) : "";
+    console.log(`Recv: [${req.method}] ${req.originalUrl} ${data ? "[DATA] " + data : ""  }`);
     return next();
 }
 

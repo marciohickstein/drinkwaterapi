@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { logRequest, response, parserData } = require('../utils');
+const { logRequest } = require('../utils');
 const Consumption = require('../models/consumption');
-const consumption = require('../models/consumption');
-const {showTimers} = require('../socket-reminder.js')
+const {showTimers} = require('../socket-reminder.js');
 
 function getDateTodayISOString(){
     let localeDate = new Date(new Date().toLocaleDateString());
@@ -12,11 +11,13 @@ function getDateTodayISOString(){
 }
 
 router.get("/", logRequest, async (req, res) => {
+    let consumptions;
+
     try {
         let filterDate = req.query.date ? req.query.date : getDateTodayISOString();
 
-        let filterDateStart = filterDate+'T00:00:00'
-        let filterDateEnd = filterDate+'T23:59:59'
+        let filterDateStart = filterDate+'T00:00:00';
+        let filterDateEnd = filterDate+'T23:59:59';
 
         consumptions = await Consumption.find({ date: { $gte: filterDateStart, $lte: filterDateEnd } });
 
@@ -25,7 +26,7 @@ router.get("/", logRequest, async (req, res) => {
     }
     console.log(`Send: ${JSON.stringify(consumptions)}`);
     res.json(consumptions);
-})
+});
 
 router.post("/", logRequest, async (req,res) => {
     const {type, quantity, time, date} = req.body;
@@ -38,7 +39,7 @@ router.post("/", logRequest, async (req,res) => {
         quantity: quantity,
         time: time,
         date: date ? date : new Date(localeDateString)
-    })
+    });
 
     try {
         const newConsumption = await consumption.save();
@@ -47,7 +48,7 @@ router.post("/", logRequest, async (req,res) => {
     } catch (error) {
         res.status(500).json({message: error.message});
     }
-})
+});
 
 router.delete("/:id", logRequest, (req,res) => {
     try {
@@ -67,6 +68,6 @@ router.delete("/:id", logRequest, (req,res) => {
     } catch (error) {
         res.status(500).json({message: error.message});
     }
-})
+});
 
 module.exports.routerWaterConsumption = router;
