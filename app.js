@@ -1,9 +1,10 @@
-require('dotenv').config();
-
 // Requires
+require('dotenv').config();
 const mongoose = require("mongoose");
 const express = require("express");
 const helmet = require('helmet');
+const xss = require('xss-clean');
+const rateLimit = require("express-rate-limit");
 //const cors = require('cors');
 const app = express();
 var server = require('http').Server(app);
@@ -16,10 +17,26 @@ const {reminderConnection} = require('./socket-reminder.js');
 
 // Middleware
 app.use(express.json());
-app.use(helmet());
 //app.use(cors());
+
+// Secure
+app.use(helmet());
+// Data Sanitization against XSS attacks
+app.use(xss());
+// Body Parser
+app.use(express.json({ limit: '10kb' })); // Body limit is 10
+
+const limit = rateLimit({
+    max: 100,// max requests
+    windowMs: 60 * 60 * 1000, // 1 Hour
+    message: 'Too many requests' // message to send
+});
+//  apply to all requests
+app.use(limit);
+
+// Routes
 app.use("/", express.static('client/'));
-app.use("/perfil", routerPerfil);
+app.use("/perfil", routerPerfil, );
 app.use('/notification', routerNotification);
 app.use('/water-consumption', routerWaterConsumption);
 app.use('/reminder', routerReminder);
