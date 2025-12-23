@@ -1,37 +1,41 @@
 const express = require('express');
 const router = express.Router();
-const { logRequest } = require('../utils');
+const { logRequest, parseDateUTC } = require('../utils');
 const Consumption = require('../models/consumption');
-const {showTimers} = require('../socket-reminder.js');
-
-function getDateTodayISOString(){
-    let localeDate = new Date(new Date().toLocaleDateString());
-    
-    return localeDate.toISOString().split('T')[0];
-}
+const { showTimers } = require('../socket-reminder.js');
 
 router.get("/", logRequest, async (req, res) => {
-    let consumptions;
-
     try {
-        let filterDate = req.query.date ? req.query.date : getDateTodayISOString();
+        if (!req.query.date) {
+            return res.status(400).json({ message: "Parâmetro 'date' é obrigatório (YYYY-MM-DD)" });
+        }
 
-        let filterDateStart = filterDate+'T00:00:00';
-        let filterDateEnd = filterDate+'T23:59:59';
+        const filterDate = parseDateUTC(req.query.date);
 
-        consumptions = await Consumption.find({ date: { $gte: filterDateStart, $lte: filterDateEnd } });
+        const filterNextDay = new Date(filterDate);
+        filterNextDay.setUTCDate(filterNextDay.getUTCDate() + 1);
+
+        const filter = {
+            date: {
+                $gte: filterDate,
+                $lt: filterNextDay
+            }
+        };
+
+        const consumptions = await Consumption.find(filter);
+        console.log(`Send: ${JSON.stringify(consumptions)}`);
+
+        res.json(consumptions);
 
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
-    console.log(`Send: ${JSON.stringify(consumptions)}`);
-    res.json(consumptions);
 });
 
-router.post("/", logRequest, async (req,res) => {
-    const {type, quantity, time, date} = req.body;
+router.post("/", logRequest, async (req, res) => {
+    const { type, quantity, time, date } = req.body;
 
-    let localeDateString = new Date().toLocaleDateString();    
+    let localeDateString = new Date().toLocaleDateString();
 
     showTimers();
     const consumption = new Consumption({
@@ -46,27 +50,27 @@ router.post("/", logRequest, async (req,res) => {
         console.log(`Send: ${JSON.stringify(newConsumption)}`);
         res.status(200).json(newConsumption);
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 });
 
-router.delete("/:id", logRequest, (req,res) => {
+router.delete("/:id", logRequest, (req, res) => {
     try {
         Consumption.findByIdAndRemove(req.params.id, (error) => {
             let response;
 
-            if (error){
-                response = {message: error.message};
+            if (error) {
+                response = { message: error.message };
                 console.log(`Send: ${JSON.stringify(response)}`);
                 return res.status(500).json(response);
             }
-            
-            response = {message: "Item removed"};
+
+            response = { message: "Item removed" };
             console.log(`Send: ${JSON.stringify(response)}`);
             res.json(response);
         });
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 });
 

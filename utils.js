@@ -1,6 +1,12 @@
 const {readFileSync} = require('fs');
 const DEFAULT_INTERVAL = '00:15'; // Interval 15min
 
+// Converte string to date UTF
+function parseDateUTC(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
+}
+
 // Read configurations
 function readConfigurationInterval(){
     // Get interval of the reminder
@@ -50,6 +56,6 @@ function logRequest(req, res, next){
 }
 
 // Resources exported
-module.exports = { response, showRequest, parserData, readConfigurationInterval, logRequest };
+module.exports = { response, showRequest, parserData, readConfigurationInterval, logRequest, parseDateUTC };
 
 

@@ -26,13 +26,13 @@ app.use(xss());
 // Body Parser
 app.use(express.json({ limit: '10kb' })); // Body limit is 10
 
-const limit = rateLimit({
-    max: 100,// max requests
-    windowMs: 60 * 60 * 1000, // 1 Hour
-    message: 'Too many requests' // message to send
-});
-//  apply to all requests
-app.use(limit);
+// const limit = rateLimit({
+//     max: 100,// max requests
+//     windowMs: 60 * 60 * 1000, // 1 Hour
+//     message: 'Too many requests' // message to send
+// });
+// //  apply to all requests
+// app.use(limit);
 
 // Routes
 app.use("/", express.static('client/'));
@@ -55,7 +55,11 @@ app.get('*', function(req, res){
     res.sendFile(__dirname+'/client/error404.html');
 });
 
-mongoose.connect(process.env.DATABASE_STRING, {useNewUrlParser: true, useUnifiedTopology: true});
+console.log(`Running in ${process.env.NODE_ENV === 'development' ? process.env.NODE_ENV : 'production'}`);
+
+const databaseString = process.env.NODE_ENV === 'development' ? process.env.DATABASE_STRING_DEBUG : process.env.DATABASE_STRING;
+
+mongoose.connect(databaseString, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
 db.on('error', (err) => { 
@@ -63,7 +67,7 @@ db.on('error', (err) => {
 });
 db.on('open', () => console.log("Database connected!"));
 
-let port = process.env.PORT_DEFAULT;
+const port = process.env.NODE_ENV === 'development' ? process.env.PORT_DEFAULT_DEBUG : process.env.PORT_DEFAULT;
 
 server.listen(port, () => {
     console.log(`Server Drink Water API running on ${port}`);

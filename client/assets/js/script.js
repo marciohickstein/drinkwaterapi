@@ -7,39 +7,43 @@ var interval = '00:00', nextReminder = Date.now();
 
 // Faz chamadas REST no servidor para buscar os dados
 function sendGetRest(url, callback) {
-    console.log(`Enviando transação para o servidor: [GET] ${url}`);
+    console.log(`[GET] ${url}`);
+
     fetch(url)
-    .then((response) => {
-        if (response.status !== 200)
-            throw new Error(`${response.status} (${response.statusText})`);
-        response.json().then((data) => {
-            console.log(`Dados retornado da transação com o servidor: ${JSON.stringify(data)}`);
-            callback(null, data); 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`${response.status} (${response.statusText})`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Resposta:', data);
+            callback(null, data);
+        })
+        .catch(err => {
+            console.error('Erro no fetch:', err);
+            callback(err, null);
         });
-    })
-    .catch(function(err){ 
-        callback(err, null);
-    });
 }
 
-function sendHttpRest(path, method, data, callbackSuccess){
+function sendHttpRest(path, method, data, callbackSuccess) {
     $.ajax({
         url: `${url}/${path}`,
         type: method,
         data: JSON.stringify(data),
         processData: false,
         contentType: "application/json; charset=UTF-8",
-        beforeSend : function(){
+        beforeSend: function () {
             console.log(`Enviando transação para o servidor: [${method}] ${this.url}`);
             $("#processando")[0].style.visibility = 'visible';
         },
-        success: function(data){
+        success: function (data) {
             console.log(`Dados retornado da transação com o servidor: ${JSON.stringify(data)}`);
             if (callbackSuccess)
                 callbackSuccess(data);
             $("#processando")[0].style.visibility = 'hidden';
         },
-        error: function(xhr, ajaxOptions, thrownError) {
+        error: function (xhr, ajaxOptions, thrownError) {
             console.log(`Ocorreu um erro na transação com o servidor: ${this.url}`);
             $("#processando")[0].style.visibility = 'hidden';
         }
@@ -47,11 +51,11 @@ function sendHttpRest(path, method, data, callbackSuccess){
 }
 
 // Funcoes auxiliares
-function pad(n){
+function pad(n) {
     return n < 10 ? '0' + n : n;
 }
 
-function getHMS(dateTime, seconds = true){
+function getHMS(dateTime, seconds = true) {
     let strTime = `${pad(dateTime.getHours())}:${pad(dateTime.getMinutes())}`
 
     if (seconds)
@@ -60,39 +64,39 @@ function getHMS(dateTime, seconds = true){
     return strTime;
 }
 
-function getHM(dateTime){
+function getHM(dateTime) {
     return getHMS(dateTime, false);
 }
 
 
 // DADOS DO PERFIL: Funcoes para exibir, obter e salvar os dados.
-function showPerfil(){
+function showPerfil() {
     $("#conf").show();
     getPerfil();
 }
 
 let perfilNotExists = true;
 
-function getPerfil(){
+function getPerfil() {
     let urlRest = `${url}/perfil/1`;
 
-    sendGetRest(`${urlRest}`,function (error, data) {
-        if (error){
+    sendGetRest(`${urlRest}`, function (error, data) {
+        if (error) {
             $('#email').val('');
             $('#passwd').val('');
             $('#weight').val('');
             console.log(error);
             perfilNotExists = true;
-        }else{
+        } else {
             $('#email').val(data.email);
             $('#passwd').val(data.passwd);
             $('#weight').val(data.weight);
             perfilNotExists = false;
         }
-      });
+    });
 }
 
-function savePerfil(){
+function savePerfil() {
     const idValue = 1;
     const emailValue = $('#email').val();
     const passwdValue = $('#passwd').val();
@@ -106,15 +110,15 @@ function savePerfil(){
     perfilNotExists = false;
 }
 
-function calculateTotalConsumption(){
+function calculateTotalConsumption() {
     let qntByWeight = 35;
-    $.getJSON(`${url}/perfil/1`,function (data) {
+    $.getJSON(`${url}/perfil/1`, function (data) {
         total = qntByWeight * parseInt(data.weight);
     });
 }
 
 // DADOS DA NOTIFICACAO: Funcoes para exibir, obter e salvar os dados.
-function showNotification(){
+function showNotification() {
     $("#notification").show();
 
     getNotification();
@@ -122,15 +126,15 @@ function showNotification(){
 
 let notificationNotExists = true;
 
-function getNotification(){
+function getNotification() {
     sendGetRest(`${url}/notification/1`, (error, data) => {
-        if (error){
+        if (error) {
             $('#start').val('');
             $('#end').val('');
             $('#interval').val('');
             console.error(error);
             notificationNotExists = true;
-        }else{
+        } else {
             $('#start').val(data.start);
             $('#end').val(data.end);
             $('#interval').val(data.interval);
@@ -139,7 +143,7 @@ function getNotification(){
     });
 }
 
-function saveNotification(){
+function saveNotification() {
     const idValue = 1;
     const startValue = $('#start').val();
     const endValue = $('#end').val();
@@ -153,13 +157,13 @@ function saveNotification(){
 }
 
 // DADOS DE CONSUMO DE AGUA: Funcoes para exibir, obter e salvar os dados.
-function clearPanelConsumption(){
+function clearPanelConsumption() {
     $('#listItem').empty();
     totalPanelItems = 0;
     updateStatusBar(0);
 }
 
-function showConsumption(){
+function showConsumption() {
     $("#divConsumption").show();
     $('#btnDay').addClass("active");
     clearPanelConsumption();
@@ -168,20 +172,19 @@ function showConsumption(){
 
 let consumptionNotExists = true;
 
-function getConsumption(){
+function getConsumption() {
     let dateConsumption = $('#dateConsumption').val();
     let queryDate = dateConsumption ? `?date=${dateConsumption}` : "";
 
     sendGetRest(`${url}/water-consumption${queryDate}`, (error, data) => {
-        if (error)
-        {
+        if (error) {
             // Limpa painel de consumo
             // $('#listItem').empty();
             consumptionNotExists = true;
-        }else{
+        } else {
             // Preenche os dados no painel de consumo
             data.forEach(item => {
-                addItemPanel(item._id, $(`#${item.type}`).clone(), item.time.substring(0,5));
+                addItemPanel(item._id, $(`#${item.type}`).clone(), item.time.substring(0, 5));
                 updateStatusBar(item.quantity);
             });
 
@@ -190,13 +193,13 @@ function getConsumption(){
     });
 }
 
-function removeConsumption(id){
+function removeConsumption(id) {
     let _id = id.split('-')[1];
     sendHttpRest(`water-consumption/${_id}`, "DELETE", {});
 }
 
-function updateStatusBar(quantity){
-    if (quantity === 0){
+function updateStatusBar(quantity) {
+    if (quantity === 0) {
         $('#progress-bar').text();
         $('#progress-bar').css("width", 0);
         return;
@@ -214,7 +217,7 @@ function updateStatusBar(quantity){
     $('#progress-bar').css("width", percentText);
 }
 
-function addItemPanel(_id, item, time){
+function addItemPanel(_id, item, time) {
     let component = item.find("figcaption");
     component.append(`<div><small>${time}</small></div>`);
 
@@ -232,7 +235,7 @@ function addItemPanel(_id, item, time){
     $('#listItem').append(item[0]);
 }
 
-function clickAddItem(item){
+function clickAddItem(item) {
     let consumption = {};
     let dateTime = new Date();
     let componentQuantity = item.find("small");
@@ -255,15 +258,15 @@ function renderChart(data, labels) {
     let dateConsumption = $('#dateChart').val();
     let queryDate = dateConsumption ? `?date=${dateConsumption}` : "";
 
-    $.getJSON(`${url}/water-consumption${queryDate}`, (data)=>{
+    $.getJSON(`${url}/water-consumption${queryDate}`, (data) => {
         const canvas = document.getElementById("myChart").getContext('2d');
-        let labels =  ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
-        let values =  [ 0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ];
+        let labels = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"];
+        let values = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
         let hour = 0;
         let subtotal = 0;
 
-        if (data){
+        if (data) {
             data.forEach((item) => {
                 subtotal += item.quantity;
                 hour = parseInt(item.time.substring(0, 2));
@@ -290,28 +293,28 @@ function renderChart(data, labels) {
                 }]
             },
             //HERE COMES THE AXIS Y LABEL
-            options : {
+            options: {
                 scales: {
-                yAxes: [{
-                    scaleLabel: {
-                    display: true,
-                    labelString: 'quantidade consumida em (ml)'
-                    },
-                    ticks: {
-                        min: 0,
-                        max: total,
-                        stepSize: 200,
-                      }
-                },]
-            
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'quantidade consumida em (ml)'
+                        },
+                        ticks: {
+                            min: 0,
+                            max: total,
+                            stepSize: 200,
+                        }
+                    },]
+
                 }
-            }            
+            }
         });
     });
 }
 
 
-function showChart(){
+function showChart() {
     $("#chart").show();
     $('#btnDay').removeClass("active");
     renderChart();
@@ -353,11 +356,11 @@ $(() => {
         showNotification();
     });
     $('#dateConsumption').on('change', e => {
-       clearPanelConsumption();
-       getConsumption();
+        clearPanelConsumption();
+        getConsumption();
     })
 
-    $('#dateChart').on('change', e=>{
+    $('#dateChart').on('change', e => {
         renderChart();
     })
 
@@ -377,7 +380,7 @@ $(() => {
         removeConsumption(id);
 
         $(`#${id}`).remove();
-        
+
         let value = parseInt($("#val-quantity")[0].innerHTML);
         updateStatusBar(-value);
     })
@@ -386,3 +389,20 @@ $(() => {
 
     calculateTotalConsumption();
 })
+
+document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('dateConsumption');
+
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+
+    input.value = `${yyyy}-${mm}-${dd}`;
+    document
+        .getElementById('btnSalvar')
+        .addEventListener('click', savePerfil);
+    document
+        .getElementById('btnSalvarNotificacao')
+        .addEventListener('click', saveNotification);
+});
