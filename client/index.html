@@ -28,11 +28,14 @@
             </button>
             <div id="collapsibleNavbar" class="collapse navbar-collapse ml-md-3">
                 <ul class="navbar-nav">
-                    <li id="mnNotification" class="nav-item"><a href="#" class="nav-link">Notificações</a></li>
-                    <!-- <li class="nav-item"><a href="#" class="nav-link">Geral</a></li> -->
+                    <li id="mnNotification" class="nav-item"><a href="#" class="nav-link">Notificacoes</a></li>
                     <li id="mnPerfil" class="nav-item"><a href="#" class="nav-link">Perfil</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"></a></li>
-                    <li class="nav-item"><a href="#" class="nav-link disabled">Versão: 1.5</a></li>
+                    <li id="mnLogout" class="nav-item">
+                        <a href="#" class="nav-link" id="btnLogout">
+                            <i class="fas fa-sign-out-alt"></i> Sair
+                        </a>
+                    </li>
+                    <li class="nav-item"><a href="#" class="nav-link disabled">v1.5</a></li>
                 </ul>
             </div>
             <!-- BOTAO DIREITA: TOGGLER -->
@@ -114,8 +117,15 @@
         <main>
             <!-- DIV DE GRFICOS -->
             <div id="chart" class="mt-3" style="display: none;">
-                <div class="d-flex justify-content-center">
-                    <input style="max-width: 200px;" class="form-control" type="date" name="dateChart" id="dateChart">
+                <div class="date-picker-wrapper">
+                    <button type="button" class="btn btn-outline-secondary date-nav-btn" id="chartPrevDay" title="Dia anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <input class="form-control" type="date" name="dateChart" id="dateChart">
+                    <button type="button" class="btn btn-outline-secondary date-nav-btn" id="chartNextDay" title="Próximo dia">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-today" id="chartToday">Hoje</button>
                 </div>
                 <canvas id="myChart" width="400" height="400"></canvas>
             </div>
@@ -123,16 +133,21 @@
 
             <!-- DIV CONSUMO DIA -->
             <div id="divConsumption" class="mt-3" style="display: block;">
-                <div class="d-flex justify-content-center">
-                    <input style="max-width: 200px;" class="form-control" type="date" name="dateConsumption"
-                        id="dateConsumption">
+                <div class="date-picker-wrapper">
+                    <button type="button" class="btn btn-outline-secondary date-nav-btn" id="consumptionPrevDay" title="Dia anterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <input class="form-control" type="date" name="dateConsumption" id="dateConsumption">
+                    <button type="button" class="btn btn-outline-secondary date-nav-btn" id="consumptionNextDay" title="Próximo dia">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-today" id="consumptionToday">Hoje</button>
                 </div>
 
-                <div class="progress mt-3" style="height: 40px;">
-                    <div id="progress-bar" class="progress-bar" rule="progressbar"></div>
+                <div class="progress mt-3">
+                    <div id="progress-bar" class="progress-bar" role="progressbar"></div>
                 </div>
-                <!-- <img class="img-fluid" src="assets/img/drinkwater.png" alt="" width="500"> -->
-                <div id="listItem" class="d-flex bg-light p-3 flex-wrap align-items-baseline" style="height: 370px;">
+                <div id="listItem" class="d-flex bg-light p-2 p-sm-3 flex-wrap align-items-baseline">
                 </div>
 
                 <div class="d-flex justify-content-center m-1">
@@ -141,11 +156,10 @@
                     <span class="sr-only">Loading...</span>
                 </div>
 
-                <div style="min-height: 80px;" class="row m-1">
-
+                <div class="add-water-section row m-1">
                     <div class="col text-center">
                         <button type="button" data-bs-toggle="collapse" data-bs-target="#option"
-                            class="btn btn-primary btn-circle" style="min-height: 45px; min-width: 40px">
+                            class="btn btn-primary btn-circle btn-add-water">
                             <i class="fas fa-plus"></i>
                         </button>
                         <div id="option" class="collapse">
@@ -179,64 +193,136 @@
 
             <!-- DIV MENU PERFIL -->
             <div id="conf" style="display: none;">
-                <!-- <form action=""> -->
                 <div class="form-row mt-3">
                     <div class="col">
-                        <h5 class="font-weight-bold">Configurações de Login</h5>
+                        <h5 class="font-weight-bold"><i class="fas fa-user-circle mr-2"></i>Meu Perfil</h5>
                     </div>
                 </div>
-                <div class="form-group mt-3">
-                    <label for="email">Email</label>
+
+                <!-- Profile Summary -->
+                <div class="profile-summary" id="profileSummary">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-email" id="summaryEmail">seu@email.com</div>
+                    <div class="profile-water-goal">
+                        <i class="fas fa-tint mr-1"></i> Meta diária: <strong id="summaryWaterGoal">2100ml</strong>
+                    </div>
+                </div>
+
+                <!-- Email Field -->
+                <div class="profile-field-group">
+                    <label for="email"><i class="fas fa-envelope text-secondary mr-1"></i> Email</label>
                     <input type="email" name="email" id="email" class="form-control"
                         placeholder="Entre com o seu email">
                 </div>
-                <div class="form-group">
-                    <label for="passwd">Senha</label>
-                    <input type="password" name="passwd" id="passwd" class="form-control"
-                        placeholder="Entre com a sua senha">
+
+                <!-- Password Field -->
+                <div class="profile-field-group">
+                    <label for="passwd"><i class="fas fa-lock text-secondary mr-1"></i> Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="passwd" id="passwd" class="form-control"
+                            placeholder="Entre com a sua senha">
+                        <button type="button" class="password-toggle" id="togglePassword" title="Mostrar/ocultar senha">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="weight">Peso (kg)</label>
-                    <input type="text" name="weight" id="weight" class="form-control"
-                        placeholder="Entre com o seu peso">
+
+                <!-- Weight Field -->
+                <div class="profile-field-group">
+                    <label for="weight"><i class="fas fa-weight text-secondary mr-1"></i> Peso (kg)</label>
+                    <input type="number" name="weight" id="weight" class="form-control"
+                        placeholder="Ex: 70" min="30" max="250">
+                    <div class="weight-presets">
+                        <button type="button" class="weight-preset-btn" data-weight="50">50 kg</button>
+                        <button type="button" class="weight-preset-btn" data-weight="60">60 kg</button>
+                        <button type="button" class="weight-preset-btn" data-weight="70">70 kg</button>
+                        <button type="button" class="weight-preset-btn" data-weight="80">80 kg</button>
+                        <button type="button" class="weight-preset-btn" data-weight="90">90 kg</button>
+                        <button type="button" class="weight-preset-btn" data-weight="100">100 kg</button>
+                    </div>
+                    <small class="text-muted mt-2 d-block">
+                        <i class="fas fa-info-circle mr-1"></i> Recomendação: 35ml de água por kg de peso corporal
+                    </small>
                 </div>
-                <div class="form-group text-left">
-                    <button class="btn btn-primary" id="btnSalvar">Salvar</button>
-                    <!-- <button class="btn btn-primary">Cancelar</button> -->
+
+                <div class="form-group text-left mt-3">
+                    <button class="btn btn-primary btn-lg" id="btnSalvar">
+                        <i class="fas fa-save mr-1"></i> Salvar Perfil
+                    </button>
                 </div>
-                <!-- </form> -->
             </div>
             <!-- DIV MENU PERFIL -->
 
             <!-- DIV MENU NOTIFICACOES -->
             <div id="notification" style="display: none">
-                <!-- <form action=""> -->
                 <div class="form-row mt-3">
                     <div class="col">
-                        <h5 class="font-weight-bold">Intervalo e tempo entre notificações</h5>
+                        <h5 class="font-weight-bold"><i class="fas fa-bell mr-2"></i>Configurar Lembretes</h5>
                     </div>
                 </div>
-                <div class="form-row mt-3">
-                    <div class="col-6 col-sm-2 form-group">
-                        <label for="start">Início</label>
-                        <input type="time" name="start" id="start" class="form-control" style="width: 100px">
+
+                <!-- Schedule Summary -->
+                <div class="schedule-summary" id="scheduleSummary">
+                    <h6><i class="fas fa-clock mr-1"></i> Seu cronograma de lembretes</h6>
+                    <div class="schedule-times">
+                        <span id="summaryStart">08:00</span>
+                        <i class="fas fa-arrow-right schedule-icon"></i>
+                        <span id="summaryEnd">18:00</span>
                     </div>
-                    <div class="col-6 col-sm-2 form-group">
-                        <label for="end">Fim</label>
-                        <input type="time" name="end" id="end" class="form-control" style="width: 100px">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-3 form-group">
-                        <label for="interval">Intervalo</label>
-                        <input type="time" name="interval" id="interval" class="form-control" style="width: 100px">
+                    <div class="schedule-interval">
+                        <i class="fas fa-sync-alt mr-1"></i> A cada <strong id="summaryInterval">30 minutos</strong>
                     </div>
                 </div>
-                <div class="form-group text-left">
-                    <button class="btn btn-primary" id="btnSalvarNotificacao">Salvar</button>
-                    <!-- <button type="submit" class="btn btn-primary">Cancelar</button> -->
+
+                <!-- Start Time -->
+                <div class="time-field-group">
+                    <label for="start"><i class="fas fa-sun text-warning mr-1"></i> Início dos lembretes</label>
+                    <input type="time" name="start" id="start" class="form-control">
+                    <div class="time-presets" data-target="start">
+                        <button type="button" class="time-preset-btn" data-time="06:00">06:00</button>
+                        <button type="button" class="time-preset-btn" data-time="07:00">07:00</button>
+                        <button type="button" class="time-preset-btn" data-time="08:00">08:00</button>
+                        <button type="button" class="time-preset-btn" data-time="09:00">09:00</button>
+                        <button type="button" class="time-preset-btn" data-time="10:00">10:00</button>
+                    </div>
                 </div>
-                <!-- </form> -->
+
+                <!-- End Time -->
+                <div class="time-field-group">
+                    <label for="end"><i class="fas fa-moon text-info mr-1"></i> Fim dos lembretes</label>
+                    <input type="time" name="end" id="end" class="form-control">
+                    <div class="time-presets" data-target="end">
+                        <button type="button" class="time-preset-btn" data-time="17:00">17:00</button>
+                        <button type="button" class="time-preset-btn" data-time="18:00">18:00</button>
+                        <button type="button" class="time-preset-btn" data-time="19:00">19:00</button>
+                        <button type="button" class="time-preset-btn" data-time="20:00">20:00</button>
+                        <button type="button" class="time-preset-btn" data-time="21:00">21:00</button>
+                        <button type="button" class="time-preset-btn" data-time="22:00">22:00</button>
+                    </div>
+                </div>
+
+                <!-- Interval -->
+                <div class="time-field-group">
+                    <label><i class="fas fa-hourglass-half text-success mr-1"></i> Intervalo entre lembretes</label>
+                    <input type="hidden" name="interval" id="interval">
+                    <div class="interval-presets">
+                        <button type="button" class="interval-preset-btn" data-interval="00:01">1 min</button>
+                        <button type="button" class="interval-preset-btn" data-interval="00:15">15 min</button>
+                        <button type="button" class="interval-preset-btn" data-interval="00:30">30 min</button>
+                        <button type="button" class="interval-preset-btn" data-interval="00:45">45 min</button>
+                        <button type="button" class="interval-preset-btn" data-interval="01:00">1 hora</button>
+                        <button type="button" class="interval-preset-btn" data-interval="01:30">1h 30min</button>
+                        <button type="button" class="interval-preset-btn" data-interval="02:00">2 horas</button>
+                    </div>
+                </div>
+
+                <div class="form-group text-left mt-3">
+                    <button class="btn btn-primary btn-lg" id="btnSalvarNotificacao">
+                        <i class="fas fa-save mr-1"></i> Salvar Configurações
+                    </button>
+                </div>
             </div>
             <!-- DIV MENU NOTIFICACOES -->
         </main>
@@ -249,21 +335,10 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/socket.io.min.js"></script>
+    <script src="assets/js/auth.js"></script>
     <script src="assets/js/script.js"></script>
     <script src="assets/js/Chart.min.js"></script>
-    <script>
-        var socket = io(window.location.href);
-
-        socket.on('connect', () => {
-            console.log("connected");
-        })
-
-        socket.on('reminder', () => {
-            let date = new Date();
-            console.log(`message received from event reminder at ${date.toLocaleString()} `);
-            $("#modal-reminder").modal("show");
-        })
-    </script>
+    <script src="assets/js/socket-init.js"></script>
 </body>
 
 </html>

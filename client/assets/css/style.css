@@ -1,13 +1,662 @@
+/* ========================================
+   MOBILE FIRST - Base styles for mobile
+   ======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Container adjustments for mobile */
+.container {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 /* Style the buttons */
 .fig {
     border: none;
     outline: none;
-    padding: 10px 16px;
+    padding: 12px;
     cursor: pointer;
-  }
-  
-  /* Style the active class (and buttons on mouse-over) */
-  .active, .fig:hover {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Style the active class (and buttons on mouse-over) */
+.active, .fig:hover {
     background-color: #dfd5d5;
     color: white;
-  }
+}
+
+/* ========================================
+   DATE PICKER - Mobile First
+   ======================================== */
+.date-picker-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 5px 0;
+}
+
+.date-picker-wrapper .form-control {
+    width: 140px;
+    max-width: 140px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 10px 8px;
+    height: 44px;
+}
+
+.date-nav-btn {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+}
+
+.date-nav-btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.btn-today {
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    height: 44px;
+    white-space: nowrap;
+}
+
+/* ========================================
+   NOTIFICATION & TIME FIELDS - Mobile First
+   ======================================== */
+.time-field-group {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.time-field-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 12px;
+    display: block;
+    font-size: 0.95rem;
+}
+
+.time-field-group .form-control {
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    height: 48px;
+    width: 100%;
+    max-width: 140px;
+}
+
+.time-field-group .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+/* Time Presets - Mobile */
+.time-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.time-preset-btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    border: 2px solid #dee2e6;
+    background: white;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 44px;
+    min-width: 60px;
+}
+
+.time-preset-btn:hover,
+.time-preset-btn:active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.time-preset-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Interval Presets - Mobile */
+.interval-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.interval-preset-btn {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-radius: 22px;
+    border: 2px solid #dee2e6;
+    background: white;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    min-height: 44px;
+    flex: 1 1 calc(33.333% - 8px);
+    min-width: 90px;
+    text-align: center;
+}
+
+.interval-preset-btn:hover,
+.interval-preset-btn:active {
+    background: #e9ecef;
+    border-color: #adb5bd;
+}
+
+.interval-preset-btn.active {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+/* Schedule Summary - Mobile */
+.schedule-summary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.schedule-summary h6 {
+    margin-bottom: 10px;
+    font-weight: 600;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+
+.schedule-summary .schedule-times {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.schedule-summary .schedule-icon {
+    font-size: 1.2rem;
+}
+
+.schedule-summary .schedule-interval {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Time Range Visual */
+.time-range-visual {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.time-range-visual .time-point {
+    text-align: center;
+}
+
+.time-range-visual .time-point i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.time-range-visual .time-line {
+    flex: 1;
+    height: 3px;
+    background: linear-gradient(to right, #ffc107, #28a745);
+    margin: 0 15px;
+    border-radius: 2px;
+}
+
+/* ========================================
+   PROFILE SECTION - Mobile First
+   ======================================== */
+.profile-summary {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.profile-summary .profile-avatar {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 1.8rem;
+}
+
+.profile-summary .profile-email {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin-bottom: 5px;
+    word-break: break-all;
+}
+
+.profile-summary .profile-water-goal {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.profile-summary .profile-water-goal strong {
+    font-size: 1.1rem;
+}
+
+.profile-field-group {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.profile-field-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 0.95rem;
+}
+
+.profile-field-group .form-control {
+    font-size: 16px;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    transition: border-color 0.2s;
+    padding: 12px 15px;
+    width: 100%;
+    height: 48px;
+}
+
+.profile-field-group .form-control:focus {
+    border-color: #11998e;
+    box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.15);
+}
+
+.profile-field-group .input-group-text {
+    background: #e9ecef;
+    border: 2px solid #dee2e6;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+}
+
+.profile-field-group .input-group .form-control {
+    border-radius: 0 8px 8px 0;
+}
+
+/* Weight Presets - Mobile */
+.weight-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.weight-preset-btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+    border: 2px solid #dee2e6;
+    background: white;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    min-height: 44px;
+    flex: 1 1 calc(33.333% - 8px);
+    min-width: 70px;
+    text-align: center;
+}
+
+.weight-preset-btn:hover,
+.weight-preset-btn:active {
+    background: #11998e;
+    color: white;
+    border-color: #11998e;
+}
+
+.weight-preset-btn.active {
+    background: #11998e;
+    color: white;
+    border-color: #11998e;
+}
+
+/* Password Toggle */
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 10;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover,
+.password-toggle:active {
+    color: #495057;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper .form-control {
+    padding-right: 50px;
+}
+
+/* ========================================
+   BUTTONS - Mobile First
+   ======================================== */
+.btn-primary.btn-lg,
+#btnSalvar,
+#btnSalvarNotificacao {
+    width: 100%;
+    padding: 14px 20px;
+    font-size: 1rem;
+    min-height: 50px;
+}
+
+/* ========================================
+   CONSUMPTION LIST - Mobile First
+   ======================================== */
+#listItem {
+    min-height: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+}
+
+/* Progress bar mobile adjustments */
+.progress {
+    height: 35px !important;
+    border-radius: 8px;
+}
+
+.progress-bar {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Add water button section */
+.add-water-section {
+    min-height: 70px;
+    padding: 10px 0;
+}
+
+.btn-add-water {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Water options collapse */
+#option {
+    margin-top: 12px;
+}
+
+#option .fig {
+    margin: 5px;
+}
+
+/* ========================================
+   NAVBAR - Mobile adjustments
+   ======================================== */
+.navbar .btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 12px;
+}
+
+/* ========================================
+   MODAL - Mobile adjustments
+   ======================================== */
+.modal-dialog {
+    margin: 10px;
+}
+
+.modal-content {
+    border-radius: 12px;
+}
+
+.modal-header,
+.modal-footer {
+    padding: 12px 16px;
+}
+
+.modal-body {
+    padding: 16px;
+}
+
+/* ========================================
+   FORM ELEMENTS - Mobile
+   ======================================== */
+input[type="date"],
+input[type="time"],
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"] {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+}
+
+/* ========================================
+   TABLET & DESKTOP - Media Queries
+   ======================================== */
+
+/* Small tablets and large phones (576px and up) */
+@media (min-width: 576px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .date-picker-wrapper .form-control {
+        width: 160px;
+        max-width: 160px;
+    }
+
+    .interval-preset-btn {
+        flex: 0 1 auto;
+        min-width: 100px;
+    }
+
+    .weight-preset-btn {
+        flex: 0 1 auto;
+        min-width: 80px;
+    }
+
+    .btn-primary.btn-lg,
+    #btnSalvar,
+    #btnSalvarNotificacao {
+        width: auto;
+        min-width: 200px;
+    }
+
+    #listItem {
+        min-height: 300px;
+        max-height: 350px;
+    }
+
+    .profile-field-group .form-control#weight {
+        max-width: 150px;
+    }
+
+    .time-field-group .form-control {
+        max-width: 140px;
+    }
+}
+
+/* Tablets (768px and up) */
+@media (min-width: 768px) {
+    .date-picker-wrapper .form-control {
+        width: 180px;
+        max-width: 180px;
+    }
+
+    .time-field-group {
+        padding: 20px;
+    }
+
+    .profile-field-group {
+        padding: 20px;
+    }
+
+    .profile-summary .profile-avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 2rem;
+    }
+
+    .schedule-summary {
+        padding: 20px;
+    }
+
+    .time-preset-btn {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        min-height: 38px;
+    }
+
+    .interval-preset-btn {
+        padding: 10px 18px;
+    }
+
+    .weight-preset-btn {
+        padding: 8px 16px;
+    }
+
+    #listItem {
+        min-height: 320px;
+        max-height: 370px;
+    }
+}
+
+/* Desktop (992px and up) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 900px;
+    }
+
+    #listItem {
+        min-height: 350px;
+        max-height: 400px;
+    }
+
+    .btn-add-water {
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* ========================================
+   TOUCH DEVICE OPTIMIZATIONS
+   ======================================== */
+@media (hover: none) and (pointer: coarse) {
+    /* Remove hover effects on touch devices */
+    .time-preset-btn:hover,
+    .interval-preset-btn:hover,
+    .weight-preset-btn:hover,
+    .date-nav-btn:hover {
+        background: inherit;
+        color: inherit;
+        border-color: inherit;
+    }
+
+    .time-preset-btn.active:hover,
+    .interval-preset-btn.active:hover,
+    .weight-preset-btn.active:hover {
+        background: inherit;
+        color: white;
+    }
+
+    /* Active states for touch */
+    .time-preset-btn:active,
+    .interval-preset-btn:active,
+    .weight-preset-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ========================================
+   SAFE AREA (Notch devices)
+   ======================================== */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+
+/* Focus visible for keyboard navigation */
+.btn:focus-visible,
+.form-control:focus-visible,
+button:focus-visible {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+}

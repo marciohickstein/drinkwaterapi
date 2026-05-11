@@ -6,8 +6,6 @@ services:
     volumes:
       - ./:/usr/app
       - ./node_modules:/usr/app/node_modules
-    environment:
-      NODE_ENV: development
     depends_on:
       - db
     links:

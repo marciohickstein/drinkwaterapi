@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drink Water - Login</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .login-header img {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+        }
+
+        .login-header h3 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .login-body {
+            padding: 30px 24px;
+        }
+
+        .login-body .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-body label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .login-body .form-control {
+            height: 50px;
+            font-size: 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            padding: 10px 15px;
+        }
+
+        .login-body .form-control:focus {
+            border-color: #11998e;
+            box-shadow: 0 0 0 0.2rem rgba(17, 153, 142, 0.15);
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, #0d7d73 0%, #2ed668 100%);
+            color: white;
+        }
+
+        .btn-login:disabled {
+            opacity: 0.7;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .login-footer a {
+            color: #11998e;
+            font-weight: 500;
+        }
+
+        /* Password toggle */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .password-wrapper .form-control {
+            padding-right: 45px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="assets/img/drinkwater.png" alt="Drink Water">
+            <h3>Drink Water</h3>
+        </div>
+
+        <div class="login-body">
+            <div class="alert alert-danger" id="loginError" style="display: none;"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email"><i class="fas fa-user mr-2"></i>Usuario</label>
+                    <input type="text" class="form-control" id="email" placeholder="Digite seu usuario" required
+                        autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="passwd"><i class="fas fa-lock mr-2"></i>Senha</label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-control" id="passwd" placeholder="Digite sua senha" required
+                            autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login" id="btnLogin">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Entrar
+                </button>
+            </form>
+        </div>
+
+        <div class="login-footer">
+            <small class="text-muted">Drink Water App v1.5</small>
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/login.js"></script>
+</body>
+
+</html>
