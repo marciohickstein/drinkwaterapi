@@ -78,11 +78,15 @@ console.log(`Running in ${process.env.NODE_ENV === 'development' ? process.env.N
 
 const databaseString = process.env.NODE_ENV === 'development' ? process.env.DATABASE_STRING_DEBUG : process.env.DATABASE_STRING;
 
-mongoose.connect(databaseString, {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 
 db.on('error', (err) => {
     console.log(`Error to connect database: ${err}`);
+});
+
+mongoose.connect(databaseString).catch((err) => {
+    console.log(`Failed to connect database: ${err.message}`);
+    process.exit(1);
 });
 
 // Seed default admin user on database connect

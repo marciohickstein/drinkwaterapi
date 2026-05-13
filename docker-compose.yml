@@ -12,6 +12,7 @@ services:
       - db
     ports:
       - '8000:8000'
+    restart: on-failure
   db:
     image: 'mongo'
     container_name: MONGODB
